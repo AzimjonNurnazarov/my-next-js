@@ -1,20 +1,25 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Data from "./teams";
 import "../components/style.css";
 import Link from "next/link";
 import { getTeamsData } from "@/axios";
 
-// const [data, setData] = useState([]);
-
-// useEffect(() => {
-//   const res = getTeamsData().then((res) => {
-//     console.log(res);
-//     setData(res);
-//   });
-// }, []);
-
 const Teams = () => {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await getTeamsData();
+        setData(res);
+      } catch (error) {
+        console.error("Failed to fetch teams data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <table className="team-table">
       <thead>
@@ -28,8 +33,8 @@ const Teams = () => {
       </thead>
 
       <tbody>
-        {Data.map((item, index) => {
-          return (
+        {data.length > 0 ? (
+          data.map((item, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
               <td>{item.title}</td>
@@ -41,20 +46,15 @@ const Teams = () => {
                 </Link>
               </td>
             </tr>
-          );
-        })}
+          ))
+        ) : (
+          <tr>
+            <td colSpan="5">Loading...</td>
+          </tr>
+        )}
       </tbody>
     </table>
   );
-};
-
-export const getStaticProps = async () => {
-  const res = await getTeamsData();
-  console.log(res, "res");
-
-  return {
-    props: { data: res },
-  };
 };
 
 export default Teams;
