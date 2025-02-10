@@ -6,6 +6,7 @@ import { getTeamsData } from "@/axios";
 
 const Teams = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); // Loading holati
 
   useEffect(() => {
     const fetchData = async () => {
@@ -14,6 +15,8 @@ const Teams = () => {
         setData(res);
       } catch (error) {
         console.error("Failed to fetch teams data:", error);
+      } finally {
+        setLoading(false); // Har doim loading tugaydi
       }
     };
 
@@ -33,7 +36,11 @@ const Teams = () => {
       </thead>
 
       <tbody>
-        {data.length > 0 ? (
+        {loading ? (
+          <tr>
+            <td colSpan="5">Loading...</td>
+          </tr>
+        ) : data.length > 0 ? (
           data.map((item, index) => (
             <tr key={index}>
               <td>{index + 1}</td>
@@ -49,7 +56,7 @@ const Teams = () => {
           ))
         ) : (
           <tr>
-            <td colSpan="5">Loading...</td>
+            <td colSpan="5">No teams found</td>
           </tr>
         )}
       </tbody>
